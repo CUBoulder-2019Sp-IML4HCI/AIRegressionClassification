@@ -12,7 +12,18 @@ import torch.optim as optim
 import torch.nn.functional as F
 import torchvision.transforms as T
 
+from pythonosc import dispatcher
+from pythonosc import osc_server
+
+from time import sleep
+from server import controlArray
+
+
+
+
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
+
 
 X_train = np.array([
 #   [x, y]
@@ -68,6 +79,9 @@ y_train = np.array([
     [0,0,0,0,0,0,0,1,1]
 ])
 
+
+
+
 class Controls:
     def __init__(self):
         self.env = retro.make('SuperMarioBros-Nes')
@@ -92,10 +106,16 @@ class Controls:
             action[ind] = 1
             return action
 
-    def get_user_input(self,unused_addr, x,y):
+    def get_user_input(self,x=None,y=None):
         # Get the x/y from microbit
 
-        x, y = x,y
+        try:
+            x, y = controlArray.remove(0)
+
+        except:
+            x,y = .5,.5
+
+
         return x, y
 
     def get_control_from_user_input(self, x, y):
@@ -165,15 +185,16 @@ class Controls:
         last_screen = self.get_screen()
         current_screen = self.get_screen()
         state = current_screen - last_screen
-        dispatcher = dispatcher.Dispatcher()
-        dispatcher.map("/wek/outputs", self.get_user_input)
-        server = osc_server.ThreadingOSCUDPServer( ("127.0.0.1", 12000), dispatcher)
-        server.serve_forever()
+
+
+
         for t in count():
             # Select and perform an action
 
             self.env.render()
+
             action = self.get_control_from_user_input(*self.get_user_input())
+
             if False:
                 action = self.select_action(state)
             _, reward, done, _ = self.env.step(np.array(action[0]))
@@ -261,3 +282,7 @@ class DQN(nn.Module):
         x = F.relu(self.bn2(self.conv2(x)))
         x = F.relu(self.bn3(self.conv3(x)))
         return self.head(x.view(x.size(0), -1))
+
+
+c = Controls()
+c.go()
