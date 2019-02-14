@@ -92,9 +92,10 @@ class Controls:
             action[ind] = 1
             return action
 
-    def get_user_input(self):
+    def get_user_input(self,unused_addr, x,y):
         # Get the x/y from microbit
-        x, y = random.choice(X_train)
+
+        x, y = x,y
         return x, y
 
     def get_control_from_user_input(self, x, y):
@@ -164,6 +165,10 @@ class Controls:
         last_screen = self.get_screen()
         current_screen = self.get_screen()
         state = current_screen - last_screen
+        dispatcher = dispatcher.Dispatcher()
+        dispatcher.map("/wek/outputs", self.get_user_input)
+        server = osc_server.ThreadingOSCUDPServer( ("127.0.0.1", 12000), dispatcher)
+        server.serve_forever()
         for t in count():
             # Select and perform an action
 
