@@ -1,6 +1,7 @@
 import serial
 from pythonosc import udp_client
 from pythonosc import osc_message_builder
+from time import sleep
 #port - /dev/cu.usbmodem1412
 
 
@@ -23,18 +24,24 @@ send_address = '127.0.0.1', 6448
 
 # OSC basic client
 c = udp_client.SimpleUDPClient('127.00.1', 6448)
-
+i = 0
 try:
 	while True:
 		data = str(s.readline().rstrip())
+
 		x_y_z_tuple = data[2:].split(" ")
+
 		x = int(x_y_z_tuple[0])
 		y = int(x_y_z_tuple[1])
+
 		#z = x_y_z_tuple[2]
-		
+
 		#data = float(data)
-		c.send_message("/wek/inputs", [float(x), float(y)])
-		print(x,y)
+		if i == 200:
+			c.send_message("/wek/inputs", [float(x), float(y)])
+			i = 0
+
+		i += 1
 
 finally:
 	s.close()
