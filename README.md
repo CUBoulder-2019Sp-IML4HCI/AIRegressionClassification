@@ -1,5 +1,5 @@
 # AIRegressionClassification
-<<<<<<< HEAD
+
 Project of Robert Renecker &amp; Nelson Mitchell
 
 ##Requirements
@@ -17,4 +17,4 @@ to run application
 python marioGame.py 
 =======
 Project of Robert Renecker &amp; Nelson Mitchell 
->>>>>>> cc11ed5c000482f44621702228d8730d047c77c1
+
