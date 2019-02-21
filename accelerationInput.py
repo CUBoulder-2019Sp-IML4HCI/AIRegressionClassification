@@ -37,11 +37,11 @@ try:
 		#z = x_y_z_tuple[2]
 
 		#data = float(data)
-		if i == 200:
-			c.send_message("/wek/inputs", [float(x), float(y)])
-			i = 0
 
-		i += 1
+		c.send_message("/wek/inputs", [float(x), float(y)])
+
+
+
 
 finally:
 	s.close()
